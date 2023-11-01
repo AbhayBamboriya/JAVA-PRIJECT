@@ -1,0 +1,166 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Vehicle {
+    private String ownerName;
+    private String vehicleType;
+    private String vehicleName;
+    private String vehicleNumber;
+    private String ownerMobileNumber;
+    private int age;
+    private double charge;
+    private int slot;
+
+    public Vehicle(String ownerName, String vehicleType, String vehicleName, String vehicleNumber, String ownerMobileNumber, int age, double charge, int slot) {
+        this.ownerName = ownerName;
+        this.vehicleType = vehicleType;
+        this.vehicleName = vehicleName;
+        this.vehicleNumber = vehicleNumber;
+        this.ownerMobileNumber = ownerMobileNumber;
+        this.age = age;
+        this.charge = charge;
+        this.slot = slot;
+    }
+
+    public int getSlot() {
+        return slot;
+    }
+
+    @Override
+    public String toString() {
+        return "Owner Name: " + ownerName + ", Type of Vehicle: " + vehicleType +
+                ", Vehicle Name: " + vehicleName + ", Vehicle Number: " + vehicleNumber +
+                ", Mobile Number: " + ownerMobileNumber + ", Age: " + age +
+                ", Charge: " + charge + ", Slot: " + slot;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+}
+
+public class vvehicle {
+    private static final String OWNER_USERNAME = "admin";
+    private static final String OWNER_PASSWORD = "password";
+
+    private static ArrayList<Vehicle> vehicles = new ArrayList<>();
+    private static boolean[] parkingSlots = new boolean[10]; // Assuming 10 parking slots
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to Vehicle Parking System");
+
+        while (true) {
+            System.out.println("\nAre you a customer or the owner? (customer/owner/exit)");
+            String userType = scanner.nextLine();
+
+            if (userType.equals("owner")) {
+                System.out.print("Enter login ID: ");
+                String username = scanner.nextLine();
+                System.out.print("Enter password: ");
+                String password = scanner.nextLine();
+
+                if (!username.equals(OWNER_USERNAME) || !password.equals(OWNER_PASSWORD)) {
+                    System.out.println("Invalid credentials. Please try again.");
+                    continue;
+                }
+
+                handleOwnerMode(scanner);
+            } else if (userType.equals("customer")) {
+                System.out.print("Enter your name: ");
+                String customerName = scanner.nextLine();
+                displayCustomerDetails(customerName);
+            } else if (userType.equals("exit")) {
+                break;
+            } else {
+                System.out.println("Invalid input. Please try again.");
+            }
+        }
+    }
+
+    private static void handleOwnerMode(Scanner scanner) {
+        while (true) {
+            System.out.println("\nEnter 'new' to input a new vehicle, 'show' to display stored vehicles, or 'exit' to quit owner mode:");
+            String input = scanner.nextLine();
+
+            if (input.equals("new")) {
+                addVehicle(scanner);
+            } else if (input.equals("show")) {
+                displayVehicles();
+            } else if (input.equals("exit")) {
+                break;
+            } else {
+                System.out.println("Invalid input. Please try again.");
+            }
+        }
+    }
+
+    private static void addVehicle(Scanner scanner) {
+        // Input vehicle details
+        System.out.print("Enter owner name: ");
+        String ownerName = scanner.nextLine();
+        System.out.print("Enter type of vehicle: ");
+        String vehicleType = scanner.nextLine();
+        System.out.print("Enter vehicle name: ");
+        String vehicleName = scanner.nextLine();
+        System.out.print("Enter vehicle number: ");
+        String vehicleNumber = scanner.nextLine();
+        System.out.print("Enter owner's mobile number: ");
+        String ownerMobileNumber = scanner.nextLine();
+        System.out.print("Enter age: ");
+        int age = scanner.nextInt();
+        System.out.print("Enter charge: ");
+        double charge = scanner.nextDouble();
+        scanner.nextLine();  // Consume newline
+
+        // Input parking slot
+        System.out.print("Enter parking slot (1-10): ");
+        int slot = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        if (slot < 1 || slot > 10) {
+            System.out.println("Invalid slot number. Please try again.");
+            return;
+        }
+
+        if (parkingSlots[slot - 1]) {
+            System.out.println("Slot already allocated to another customer. Please choose another slot.");
+            return;
+        }
+
+        parkingSlots[slot - 1] = true;
+
+        // Create Vehicle object and add to the list
+        Vehicle vehicle = new Vehicle(ownerName, vehicleType, vehicleName, vehicleNumber, ownerMobileNumber, age, charge, slot);
+        vehicles.add(vehicle);
+
+        System.out.println("Vehicle added successfully.");
+    }
+
+    private static void displayVehicles() {
+        if (vehicles.isEmpty()) {
+            System.out.println("No vehicles stored.");
+        } else {
+            System.out.println("\nStored Vehicles:");
+            for (Vehicle v : vehicles) {
+                System.out.println(v);
+            }
+        }
+    }
+
+    private static void displayCustomerDetails(String customerName) {
+        boolean found = false;
+        for (Vehicle v : vehicles) {
+            if (v.getOwnerName().equals(customerName)) {
+                System.out.println("\nCustomer Details:");
+                System.out.println(v);
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            System.out.println("Customer not found.");
+        }
+    }
+}
